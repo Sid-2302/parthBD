@@ -21,6 +21,7 @@ Yoo! Looking for code, hua?
     --icing-main: #fffaee;
     --icing-shadow: #e6dfcf;
     --plate: #404050;
+    --accent-glow: #e07b8e;
   }
 
   body {
@@ -94,6 +95,7 @@ Yoo! Looking for code, hua?
     box-sizing: border-box;
     box-shadow: inset 0 0 50px rgba(0,0,0,0.5);
     z-index: 10;
+    background: rgba(22, 22, 30, 0.2);
   }
 
   .frame-inner {
@@ -107,6 +109,11 @@ Yoo! Looking for code, hua?
     align-items: center;
     box-sizing: border-box;
     padding-top: 10%; 
+  }
+
+  /* Continuous smooth idle float once intro settles */
+  .visible .frame-inner {
+    animation: floatScene 5s ease-in-out infinite 4.2s;
   }
 
   .cake-scene {
@@ -253,20 +260,22 @@ Yoo! Looking for code, hua?
 
   .text-container h1 {
     margin: 0;
-    font-size: 1.8rem;
+    font-size: 1.3rem;
     font-weight: 300;
-    font-style: italic;
-    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    letter-spacing: 4px;
     color: #ffffff;
-    text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+    opacity: 0.85;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
   }
 
   .text-container p {
-    margin: 6px 0 0 0;
-    font-size: 1.6rem;
-    font-style: italic;
-    font-family: 'Georgia', serif;
-    color: #a4a4b5;
+    margin: 8px 0 0 0;
+    font-size: 2.4rem;
+    font-weight: 600;
+    font-family: 'Playfair Display', serif;
+    color: var(--accent-glow);
+    text-shadow: 0 0 20px rgba(244, 165, 179, 0.55);
   }
 
   /* --- BALLOONS --- */
@@ -323,10 +332,17 @@ Yoo! Looking for code, hua?
   @keyframes smoothFadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }
   @keyframes flicker { 0% { transform: scale(1) rotate(-1deg); filter: drop-shadow(0 0 10px rgba(255, 152, 0, 0.6)); } 100% { transform: scale(1.05) rotate(1deg); filter: drop-shadow(0 0 18px rgba(255, 235, 59, 0.9)); } }
 
+  @keyframes floatScene {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+  }
+
   @media (max-width: 480px) {
     .frame-outer { width: 92vw; height: 90vh; padding: 8px; }
     .cake-scene { transform: scale(0.85); }
-    .text-container h1 { font-size: 1.4rem; }
+    .text-container h1 { font-size: 1.4rem; letter-spacing: 3px; }
+    .text-container p { font-size: 2rem; }
     .balloon { width: 45px; height: 65px; } /* Smaller balloons for mobile */
   }
 </style>
@@ -424,11 +440,11 @@ Yoo! Looking for code, hua?
         balloon.getBoundingClientRect();
 
         // Stagger when each balloon launches
-        let launchDelay = Math.random() * 5000;
+        let launchDelay = Math.random() * 6000;
         
         setTimeout(() => {
           // 2. Initial Rise: Float up to a random spot on the screen
-          let targetX = currentX + (Math.random() - 0.5) * 200; // Drift left or right slightly
+          let targetX = currentX + (Math.random() - 0.5) * 250; // Drift left or right slightly
           let targetY = Math.random() * (window.innerHeight * 0.75); // Target upper 75% of screen
           let targetRot = (Math.random() - 0.5) * 40;
           
@@ -436,6 +452,7 @@ Yoo! Looking for code, hua?
           
           balloon.style.transition = `transform ${riseDuration}s cubic-bezier(0.25, 1, 0.5, 1)`;
           balloon.style.transform = `translate(${targetX}px, ${targetY}px) rotate(${targetRot}deg)`;
+          balloon.style.opacity = "0.75";
 
           // 3. Continuous Floating: When the rise finishes, start drifting randomly forever
           balloon.addEventListener('transitionend', function driftRandomly(e) {
